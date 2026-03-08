@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Registrar Nuevo Préstamo</h2>
+
+<form method="POST" enctype="multipart/form-data">
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label>Nombre</label>
+        <input type="text" name="nombre" class="form-control" required>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label>Apellidos</label>
+        <input type="text" name="apellidos" class="form-control" required>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label>DNI</label>
+        <input type="text" name="dni" class="form-control" required>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label>Teléfono</label>
+        <input type="text" name="telefono" class="form-control" required>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label>Dirección</label>
+    <input type="text" name="direccion" class="form-control" required>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <label>Monto</label>
+        <input type="number" step="0.01" name="monto" class="form-control" required>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <label>Interés (%)</label>
+        <input type="number" step="0.01" name="interes" class="form-control" required>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <label>Cuotas</label>
+        <input type="number" name="cuotas" class="form-control" required>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label>Tipo de Pago</label>
+    <select name="tipo_pago" class="form-select">
+        <option value="semanal">Semanal</option>
+        <option value="quincenal">Quincenal</option>
+        <option value="mensual">Mensual</option>
+    </select>
+</div>
+
+<div class="mb-3">
+    <label>DNI Frontal:</label>
+    <input type="file" name="dni_frontal">
+</div>
+
+<div class="mb-3">
+    <label>DNI Reverso:</label>
+    <input type="file" name="dni_reverso">
+</div>
+
+<div class="mb-3">
+    <label>Foto del Rostro:</label>
+    <input type="file" name="foto_rostro">
+</div>
+
+<div class="mb-3">
+    <label>Recibo de Servicio:</label>
+    <input type="file" name="recibo_servicio">
+</div>
+
+
+
+<button type="submit" class="btn btn-primary w-100">Registrar Préstamo</button>
+
+</form>
+
+{% endblock %}

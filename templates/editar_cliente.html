@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Editar Cliente</h2>
+
+<form method="POST" enctype="multipart/form-data">
+
+    <input name="nombre" value="{{cliente['nombre']}}">
+    <input name="apellidos" value="{{cliente['apellidos']}}">
+    <input name="dni" value="{{cliente['dni']}}">
+
+    <hr>
+    <h4>Foto del Cliente</h4>
+
+    {% if cliente['foto_rostro'] %}
+    <p>Foto actual:</p>
+    <img src="/static/uploads/{{ cliente['foto_rostro'] }}" width="150"><br>
+
+    <label>
+    <input type="checkbox" name="eliminar_foto">
+    Eliminar foto actual
+    </label>
+    <br><br>
+    {% endif %}
+
+    <label>Subir nueva foto</label>
+    <input type="file" name="foto_rostro">
+    
+    <input name="direccion" value="{{cliente['direccion']}}">
+    <input name="telefono" value="{{cliente['telefono']}}">
+    <input name="monto" value="{{cliente['monto']}}">
+    <input name="interes" value="{{cliente['interes']}}">
+    <input name="tipo_pago" value="{{cliente['tipo_pago']}}">
+    <input name="cuotas" value="{{cliente['cuotas']}}">
+
+    <button class="btn btn-primary">Guardar Cambios</button>
+    <a href="/" class="btn btn-secondary">Cancelar</a>
+
+</form>
+
+{% endblock %}

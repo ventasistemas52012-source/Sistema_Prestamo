@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <h2>Clientes Registrados</h2>
+    <div>
+        <a href="/nuevo" class="btn btn-primary">+ Nuevo Préstamo</a>
+        <a href="/exportar_todos" class="btn btn-success">Exportar Reporte</a>
+    </div>
+</div>
+
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>DNI</th>
+            <th>Monto</th>
+            <th>Total</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cliente in clientes %}
+        <tr>
+            <td>{{cliente[0]}}</td>
+            <td>{{cliente[1]}} {{cliente[2]}}</td>
+            <td>{{cliente[3]}}</td>
+            <td>S/ {{cliente[6]}}</td>
+            <td>S/ {{cliente[8]}}</td>
+            <td>{{cliente[9]}}</td>
+            <td>
+                <a href="/cronograma/{{ cliente[0] }}" class="btn btn-info btn-sm">Ver</a>
+                <a href="/editar/{{ cliente[0] }}" class="btn btn-warning btn-sm">Editar</a>
+                <a href="/eliminar/{{ cliente[0] }}" class="btn btn-danger btn-sm"
+                onclick="return confirm('¿Seguro que deseas eliminar este cliente y su cronograma?')">
+                Eliminar
+            </a>
+
+                </a>
+
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
