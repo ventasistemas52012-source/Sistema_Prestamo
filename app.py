@@ -122,84 +122,7 @@ def logout():
 
 
 
-# Crear base de datos si no existe
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS clientes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT,
-        apellidos TEXT,
-        dni TEXT,
-        direccion TEXT,
-        telefono TEXT,
-        monto REAL,
-        interes REAL,
-        total REAL,
-        cuotas INTEGER,
-        tipo_pago TEXT,
-        dni_frontal TEXT,
-        dni_reverso TEXT,
-        foto_rostro TEXT,
-        recibo_servicio TEXT
-    )
-    """)
-    
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS cronograma (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cliente_id INTEGER,
-        fecha_pago TEXT,
-        cuota REAL,
-        estado TEXT
-    )
-    """)
-    
-    conn.commit()
-    conn.close()
-
-init_db()
-
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS clientes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT,
-        apellidos TEXT,
-        dni TEXT,
-        direccion TEXT,
-        telefono TEXT,
-        monto REAL,
-        interes REAL,
-        total REAL,
-        cuotas INTEGER,
-        tipo_pago TEXT,
-        dni_frontal TEXT,
-        dni_reverso TEXT,
-        foto_rostro TEXT,
-        recibo_servicio TEXT
-    )
-    """)
-    
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS cronograma (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cliente_id INTEGER,
-        fecha_pago TEXT,
-        cuota REAL,
-        estado TEXT
-    )
-    """)
-
-    conn.commit()
-    conn.close()
-
-init_db()
 
 @app.route("/")
 def index():
@@ -1161,6 +1084,7 @@ import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
