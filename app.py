@@ -124,7 +124,7 @@ def logout():
 
 # Crear base de datos si no existe
 def init_db():
-    conn = sqlite3.connect('prestamos.db')
+    conn = sqlite3.connect(DB.PATH)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -523,7 +523,7 @@ def ver_cronograma(cliente_id):
 @login_required
 def editar_cronograma(cliente_id):
 
-    conn = sqlite3.connect('prestamos.db')
+    conn = sqlite3.connect(DB.PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -620,7 +620,7 @@ def actualizar_bd():
 def contar_vencidos():
     hoy = date.today().strftime("%Y-%m-%d")
 
-    conexion = sqlite3.connect('prestamos.db')
+    conexion = sqlite3.connect(DB.PATH)
     cursor = conexion.cursor()
 
     cursor.execute("""
@@ -640,7 +640,7 @@ def contar_vencidos():
 @login_required
 def eliminar_cronograma(cronograma_id):
 
-    conexion = sqlite3.connect('prestamos.db')
+    conexion = sqlite3.connect(DB.PATH)
     cursor = conexion.cursor()
 
     # Eliminamos solo esa cuota
@@ -656,7 +656,7 @@ def eliminar_cronograma(cronograma_id):
 @login_required
 def eliminar(cliente_id):
 
-    conexion = sqlite3.connect('prestamos.db')
+    conexion = sqlite3.connect(DB.PATH)
     cursor = conexion.cursor()
 
     # 1️⃣ Eliminar cronograma del cliente
@@ -690,7 +690,7 @@ def eliminar(cliente_id):
 
 @app.route('/ver_tablas')
 def ver_tablas():
-    conexion = sqlite3.connect('prestamos.db')
+    conexion = sqlite3.connect(DB.PATH)
     cursor = conexion.cursor()
 
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -758,7 +758,7 @@ def reporte():
         mes = fecha_obj.strftime("%m")
         anio = fecha_obj.strftime("%Y")
 
-        conexion = sqlite3.connect('prestamos.db')
+        conexion = sqlite3.connect(DB.PATH)
         conexion.row_factory = sqlite3.Row
         cursor = conexion.cursor()
 
@@ -795,7 +795,7 @@ def reporte():
 
 @app.route('/ver_columnas')
 def ver_columnas():
-    conexion = sqlite3.connect('prestamos.db')
+    conexion = sqlite3.connect(DB.PATH)
     cursor = conexion.cursor()
 
     cursor.execute("PRAGMA table_info(cronograma);")
@@ -1161,6 +1161,7 @@ import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
