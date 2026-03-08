@@ -20,6 +20,27 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "prestamos.db")
 
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS clientes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT,
+        dni TEXT,
+        telefono TEXT,
+        direccion TEXT,
+        monto REAL,
+        interes REAL,
+        cuotas INTEGER,
+        fecha TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
 
 
 app = Flask(__name__)
@@ -120,6 +141,29 @@ def init_db():
     )
     """)
     
+    conn.commit()
+    conn.close()
+
+init_db()
+
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS clientes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT,
+        dni TEXT,
+        telefono TEXT,
+        direccion TEXT,
+        monto REAL,
+        interes REAL,
+        cuotas INTEGER,
+        fecha TEXT
+    )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -1085,6 +1129,7 @@ import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
