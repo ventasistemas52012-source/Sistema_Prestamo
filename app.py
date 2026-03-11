@@ -169,7 +169,9 @@ def index():
 
 @app.route("/nuevo", methods=["GET", "POST"])
 def nuevo():
+
     if request.method == "POST":
+
         nombre = request.form["nombre"]
         apellidos = request.form["apellidos"]
         dni = request.form["dni"]
@@ -179,49 +181,45 @@ def nuevo():
         interes = float(request.form["interes"])
         tipo_pago = request.form["tipo_pago"]
         cuotas = int(request.form["cuotas"])
-        dni_frontal = request.files.get('dni_frontal')
-        dni_reverso = request.files.get('dni_reverso')
-        foto_rostro = request.files.get('foto_rostro')
-        recibo_servicio = request.files.get('recibo_servicio')
 
-        # Guardar archivos
-        # Guardar archivos de forma segura
+        dni_frontal = request.files.get("dni_frontal")
+        dni_reverso = request.files.get("dni_reverso")
+        foto_rostro = request.files.get("foto_rostro")
+        recibo_servicio = request.files.get("recibo_servicio")
+
+        # nombres de archivos
         dni_frontal_filename = None
         dni_reverso_filename = None
         foto_rostro_filename = None
         recibo_servicio_filename = None
 
-       if dni_frontal and dni_frontal.filename:
-           dni_frontal_filename = secure_filename(dni_frontal.filename)
-           dni_frontal.save(os.path.join(app.config["UPLOAD_FOLDER"], dni_frontal_filename))
+        # guardar archivos solo si existen
+        if dni_frontal and dni_frontal.filename != "":
+            dni_frontal_filename = secure_filename(dni_frontal.filename)
+            dni_frontal.save(os.path.join(app.config["UPLOAD_FOLDER"], dni_frontal_filename))
 
-       if dni_reverso and dni_reverso.filename:
-           dni_reverso_filename = secure_filename(dni_reverso.filename)
-           dni_reverso.save(os.path.join(app.config["UPLOAD_FOLDER"], dni_reverso_filename))
+        if dni_reverso and dni_reverso.filename != "":
+            dni_reverso_filename = secure_filename(dni_reverso.filename)
+            dni_reverso.save(os.path.join(app.config["UPLOAD_FOLDER"], dni_reverso_filename))
 
-       if foto_rostro and foto_rostro.filename:
-           foto_rostro_filename = secure_filename(foto_rostro.filename)
-           foto_rostro.save(os.path.join(app.config["UPLOAD_FOLDER"], foto_rostro_filename))
+        if foto_rostro and foto_rostro.filename != "":
+            foto_rostro_filename = secure_filename(foto_rostro.filename)
+            foto_rostro.save(os.path.join(app.config["UPLOAD_FOLDER"], foto_rostro_filename))
 
-       if recibo_servicio and recibo_servicio.filename:
-           recibo_servicio_filename = secure_filename(recibo_servicio.filename)
-           recibo_servicio.save(os.path.join(app.config["UPLOAD_FOLDER"], recibo_servicio_filename))
-
-
-
-       if not os.path.exists(app.config["UPLOAD_FOLDER"]):
-            os.makedirs(app.config["UPLOAD_FOLDER"])
+        if recibo_servicio and recibo_servicio.filename != "":
+            recibo_servicio_filename = secure_filename(recibo_servicio.filename)
+            recibo_servicio.save(os.path.join(app.config["UPLOAD_FOLDER"], recibo_servicio_filename))
 
         total = monto + (monto * interes / 100)
         valor_cuota = round(total / cuotas, 2)
-        
+
         conn = get_db()
         cursor = conn.cursor()
 
         cursor.execute("""
         INSERT INTO clientes
         (nombre, apellidos, dni, direccion, telefono, monto, interes, total, tipo_pago, cuotas,
-         dni_frontal, dni_reverso, foto_rostro, recibo_servicio)
+        dni_frontal, dni_reverso, foto_rostro, recibo_servicio)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             nombre,
@@ -241,27 +239,35 @@ def nuevo():
         ))
 
         cliente_id = cursor.lastrowid
-        
+
         fecha_actual = datetime.today()
-        
+
         for i in range(cuotas):
+
             if tipo_pago == "semanal":
                 fecha_pago = fecha_actual + timedelta(weeks=i+1)
+
             elif tipo_pago == "quincenal":
                 fecha_pago = fecha_actual + timedelta(days=15*(i+1))
+
             else:
                 fecha_pago = fecha_actual + timedelta(days=30*(i+1))
-            
+
             cursor.execute("""
             INSERT INTO cronograma (cliente_id, fecha_pago, cuota, estado)
             VALUES (?, ?, ?, ?)
-            """, (cliente_id, fecha_pago.strftime("%d/%m/%Y"), valor_cuota, "Pendiente"))
-        
+            """, (
+                cliente_id,
+                fecha_pago.strftime("%d/%m/%Y"),
+                valor_cuota,
+                "Pendiente"
+            ))
+
         conn.commit()
         conn.close()
-        
+
         return redirect("/")
-    
+
     return render_template("nuevo.html")
 
 
@@ -1109,6 +1115,7 @@ import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
