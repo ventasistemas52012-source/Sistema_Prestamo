@@ -55,18 +55,19 @@ def init_db():
         cliente_id INTEGER,
         fecha_pago TEXT,
         cuota REAL,
-        estado TEXT
+        estado TEXT,
+		mora REAL DEFAULT 0
     )
     """)
 
     conn.commit()
     conn.close()
 
-init_db()
+
 
 app = Flask(__name__)
 
-	init_db()
+init_db()
 
 UPLOAD_FOLDER = "static/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -184,16 +185,33 @@ def nuevo():
         recibo_servicio = request.files.get('recibo_servicio')
 
         # Guardar archivos
-        dni_frontal_filename = secure_filename(dni_frontal.filename)
-        dni_reverso_filename = secure_filename(dni_reverso.filename)
-        foto_rostro_filename = secure_filename(foto_rostro.filename)
-        recibo_servicio_filename = secure_filename(recibo_servicio.filename)
+        # Guardar archivos de forma segura
+        dni_frontal_filename = None
+        dni_reverso_filename = None
+        foto_rostro_filename = None
+        recibo_servicio_filename = None
 
-        dni_frontal.save(os.path.join(app.config["UPLOAD_FOLDER"], dni_frontal_filename))
-        dni_reverso.save(os.path.join(app.config["UPLOAD_FOLDER"], dni_reverso_filename))
-        foto_rostro.save(os.path.join(app.config["UPLOAD_FOLDER"], foto_rostro_filename))
-        recibo_servicio.save(os.path.join(app.config["UPLOAD_FOLDER"], recibo_servicio_filename))
-        
+       if dni_frontal and dni_frontal.filename:
+           dni_frontal_filename = secure_filename(dni_frontal.filename)
+           dni_frontal.save(os.path.join(app.config["UPLOAD_FOLDER"], dni_frontal_filename))
+
+       if dni_reverso and dni_reverso.filename:
+           dni_reverso_filename = secure_filename(dni_reverso.filename)
+           dni_reverso.save(os.path.join(app.config["UPLOAD_FOLDER"], dni_reverso_filename))
+
+       if foto_rostro and foto_rostro.filename:
+           foto_rostro_filename = secure_filename(foto_rostro.filename)
+           foto_rostro.save(os.path.join(app.config["UPLOAD_FOLDER"], foto_rostro_filename))
+
+       if recibo_servicio and recibo_servicio.filename:
+           recibo_servicio_filename = secure_filename(recibo_servicio.filename)
+           recibo_servicio.save(os.path.join(app.config["UPLOAD_FOLDER"], recibo_servicio_filename))
+
+
+
+       if not os.path.exists(app.config["UPLOAD_FOLDER"]):
+            os.makedirs(app.config["UPLOAD_FOLDER"])
+
         total = monto + (monto * interes / 100)
         valor_cuota = round(total / cuotas, 2)
         
@@ -1091,6 +1109,7 @@ import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
