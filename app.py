@@ -20,8 +20,13 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "prestamos.db")
 
+def get_db():
+    conn = get_db()
+    conn.row_factory = sqlite3.Row
+    return conn
+
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -43,7 +48,7 @@ def init_db():
         recibo_servicio TEXT
     )
     """)
-    
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS cronograma (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,6 +65,9 @@ def init_db():
 init_db()
 
 app = Flask(__name__)
+
+with app.app_context():
+	init_db()
 
 UPLOAD_FOLDER = "static/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -127,7 +135,7 @@ def logout():
 @app.route("/")
 def index():
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -190,7 +198,7 @@ def nuevo():
         total = monto + (monto * interes / 100)
         valor_cuota = round(total / cuotas, 2)
         
-        conn = sqlite3.connect("DB_PATH")
+        conn = get_db()
         cursor = conn.cursor()
 
         cursor.execute("""
@@ -244,7 +252,7 @@ def nuevo():
 @login_required
 def editar(cliente_id):
 
-    conn = sqlite3.connect("DB_PATH")
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -350,7 +358,7 @@ def editar(cliente_id):
 
 @app.route("/cronograma/<int:cliente_id>")
 def ver_cronograma(cliente_id):
-    conn = sqlite3.connect("DB_PATH")
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -446,7 +454,7 @@ def ver_cronograma(cliente_id):
 @login_required
 def editar_cronograma(cliente_id):
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -518,7 +526,7 @@ def editar_cronograma(cliente_id):
 
 @app.route('/actualizar_bd')
 def actualizar_bd():
-    conn = sqlite3.connect("DB_PATH")
+    conn = get_db()
     cursor = conn.cursor()
 
     try:
@@ -543,7 +551,7 @@ def actualizar_bd():
 def contar_vencidos():
     hoy = date.today().strftime("%Y-%m-%d")
 
-    conexion = sqlite3.connect(DB_PATH)
+    conexion = get_db()
     cursor = conexion.cursor()
 
     cursor.execute("""
@@ -563,7 +571,7 @@ def contar_vencidos():
 @login_required
 def eliminar_cronograma(cronograma_id):
 
-    conexion = sqlite3.connect(DB_PATH)
+    conexion = get_db()
     cursor = conexion.cursor()
 
     # Eliminamos solo esa cuota
@@ -579,7 +587,7 @@ def eliminar_cronograma(cronograma_id):
 @login_required
 def eliminar(cliente_id):
 
-    conexion = sqlite3.connect(DB_PATH)
+    conexion = get_db()
     cursor = conexion.cursor()
 
     # 1️⃣ Eliminar cronograma del cliente
@@ -613,7 +621,7 @@ def eliminar(cliente_id):
 
 @app.route('/ver_tablas')
 def ver_tablas():
-    conexion = sqlite3.connect(DB_PATH)
+    conexion = get_db()
     cursor = conexion.cursor()
 
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -629,7 +637,7 @@ def ver_tablas():
 @app.route("/pagar/<int:cuota_id>")
 def pagar(cuota_id):
 
-    conn = sqlite3.connect("DB_PATH")
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -681,7 +689,7 @@ def reporte():
         mes = fecha_obj.strftime("%m")
         anio = fecha_obj.strftime("%Y")
 
-        conexion = sqlite3.connect(DB_PATH)
+        conexion = get_db()
         conexion.row_factory = sqlite3.Row
         cursor = conexion.cursor()
 
@@ -718,7 +726,7 @@ def reporte():
 
 @app.route('/ver_columnas')
 def ver_columnas():
-    conexion = sqlite3.connect(DB_PATH)
+    conexion = get_db()
     cursor = conexion.cursor()
 
     cursor.execute("PRAGMA table_info(cronograma);")
@@ -734,7 +742,7 @@ from datetime import datetime
 @app.route("/vencidos")
 def vencidos():
 
-    conn = sqlite3.connect("DB_PATH")
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -797,7 +805,7 @@ from openpyxl.drawing.image import Image
 @app.route("/exportar_cronograma/<int:cliente_id>")
 def exportar_cronograma(cliente_id):
 
-    conn = sqlite3.connect("DB_PATH")
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -981,7 +989,7 @@ def exportar_cronograma(cliente_id):
 
 @app.route("/exportar_todos")
 def exportar_todos():
-    conn = sqlite3.connect("DB_PATH")
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM clientes")
@@ -1084,6 +1092,7 @@ import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
