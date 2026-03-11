@@ -21,12 +21,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "prestamos.db")
 
 def get_db():
-    conn = get_db()
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
-    conn = get_db()
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -66,7 +66,6 @@ init_db()
 
 app = Flask(__name__)
 
-with app.app_context():
 	init_db()
 
 UPLOAD_FOLDER = "static/uploads"
@@ -1092,6 +1091,7 @@ import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
